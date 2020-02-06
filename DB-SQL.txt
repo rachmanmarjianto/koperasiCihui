@@ -1,0 +1,481 @@
+
+CREATE TABLE coa (
+                id_coa VARCHAR(10) NOT NULL,
+                prev_id_coa VARCHAR(10),
+                nama VARCHAR(30) NOT NULL,
+                level INT NOT NULL,
+                saldo_normal BOOLEAN NOT NULL,
+                status BOOLEAN DEFAULT 1 NOT NULL,
+                has_child BOOLEAN DEFAULT 0 NOT NULL,
+                PRIMARY KEY (id_coa)
+);
+
+
+CREATE TABLE toko (
+                id_toko VARCHAR(4) NOT NULL,
+                nama VARCHAR(30) NOT NULL,
+                alamat VARCHAR(20) NOT NULL,
+                nama_CP VARCHAR(50) NOT NULL,
+                telp VARCHAR(20) NOT NULL,
+                email VARCHAR(30) NOT NULL,
+                PRIMARY KEY (id_toko)
+);
+
+
+CREATE TABLE jurnal (
+                id_jurnal VARCHAR(20) NOT NULL,
+                id_transaksi VARCHAR(20),
+                tanggal DATE DEFAULT current_date() NOT NULL,
+                keterangan VARCHAR(50),
+                debit INT NOT NULL,
+                kredit INT NOT NULL,
+                saldo INT NOT NULL,
+                id_coa VARCHAR(10) NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                PRIMARY KEY (id_jurnal)
+);
+
+ALTER TABLE jurnal MODIFY COLUMN id_jurnal VARCHAR(20) COMMENT 'oooo-LGRYYMMDDiiiii';
+
+
+CREATE TABLE anggota (
+                NIP VARCHAR(30) NOT NULL,
+                NIK VARCHAR(16),
+                nama VARCHAR(50) NOT NULL,
+                gender BOOLEAN NOT NULL,
+                alamat VARCHAR(20) NOT NULL,
+                tanggal_lahir DATE NOT NULL,
+                tanggal_daftar DATE DEFAULT current_date() NOT NULL,
+                finger_data TEXT,
+                finger_id INT NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                PRIMARY KEY (NIP)
+);
+
+ALTER TABLE anggota MODIFY COLUMN NIP VARCHAR(30) COMMENT 'oooo-NIP';
+
+
+CREATE TABLE buku_besar_pembantu_piutang (
+                id_bbpp VARCHAR(18) NOT NULL,
+                timestamp DATETIME DEFAULT current_timestamp() NOT NULL,
+                keterangan VARCHAR(50),
+                debit INT,
+                kredit INT,
+                saldo INT NOT NULL,
+                id_transaksi VARCHAR(20) NOT NULL,
+                NIP VARCHAR(30) NOT NULL,
+                PRIMARY KEY (id_bbpp)
+);
+
+ALTER TABLE buku_besar_pembantu_piutang MODIFY COLUMN id_bbpp VARCHAR(18) COMMENT 't';
+
+ALTER TABLE buku_besar_pembantu_piutang MODIFY COLUMN NIP VARCHAR(30) COMMENT 'oooo-NIP';
+
+
+CREATE TABLE penjualan (
+                id_penjualan VARCHAR(18) NOT NULL,
+                timestamp DATETIME NOT NULL,
+                jangka_waktu INT NOT NULL,
+                no_kartu VARCHAR(20) NOT NULL,
+                total INT NOT NULL,
+                ppn INT NOT NULL,
+                diskon INT DEFAULT 0 NOT NULL,
+                print INT DEFAULT 1 NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                NIP VARCHAR(30),
+                PRIMARY KEY (id_penjualan)
+);
+
+ALTER TABLE penjualan MODIFY COLUMN id_penjualan VARCHAR(18) COMMENT 'oooo-PURYYMMDDiiii';
+
+ALTER TABLE penjualan MODIFY COLUMN NIP VARCHAR(30) COMMENT 'oooo-NIP';
+
+
+CREATE TABLE retur_penjualan (
+                id_retur_penjualan VARCHAR(20) NOT NULL,
+                tanggal DATE NOT NULL,
+                total INT NOT NULL,
+                ppn INT DEFAULT 0 NOT NULL,
+                id_penjualan VARCHAR(18) NOT NULL,
+                PRIMARY KEY (id_retur_penjualan)
+);
+
+ALTER TABLE retur_penjualan MODIFY COLUMN id_penjualan VARCHAR(18) COMMENT 'oooo-PURYYMMDDiiii';
+
+
+CREATE TABLE hak_akses (
+                id_hakakses INT NOT NULL,
+                nama VARCHAR(20) NOT NULL,
+                PRIMARY KEY (id_hakakses)
+);
+
+
+CREATE TABLE satuan (
+                id_satuan INT AUTO_INCREMENT NOT NULL,
+                nama VARCHAR(20) NOT NULL,
+                PRIMARY KEY (id_satuan)
+);
+
+
+CREATE TABLE golongan (
+                kode_gol VARCHAR(5) NOT NULL,
+                deskripsi VARCHAR(20) NOT NULL,
+                PRIMARY KEY (kode_gol)
+);
+
+
+CREATE TABLE barang (
+                barcode VARCHAR(15) NOT NULL,
+                nama VARCHAR(30) NOT NULL,
+                stok_min INT NOT NULL,
+                harga_beli INT NOT NULL,
+                harga_jual INT NOT NULL,
+                konsinyasi BOOLEAN DEFAULT 0 NOT NULL,
+                biji_per_karton INT NOT NULL,
+                kode_gol VARCHAR(5) NOT NULL,
+                id_satuan INT NOT NULL,
+                PRIMARY KEY (barcode)
+);
+
+ALTER TABLE barang MODIFY COLUMN konsinyasi BOOLEAN COMMENT '0:bukan, 1:konsinyasi';
+
+
+CREATE TABLE detail_retur_penjualan (
+                quantity INT NOT NULL,
+                harga_satuan INT NOT NULL,
+                subtotal INT NOT NULL,
+                keterangan VARCHAR(30),
+                id_retur_penjualan VARCHAR(20) NOT NULL,
+                barcode VARCHAR(15) NOT NULL
+);
+
+
+CREATE TABLE detail_penjualan (
+                qty INT NOT NULL,
+                subtotal INT NOT NULL,
+                id_penjualan VARCHAR(18) NOT NULL,
+                barcode VARCHAR(15) NOT NULL
+);
+
+ALTER TABLE detail_penjualan MODIFY COLUMN id_penjualan VARCHAR(18) COMMENT 'oooo-PURYYMMDDiiii';
+
+
+CREATE TABLE history_stock (
+                id_history VARCHAR(16) NOT NULL,
+                timestamp DATETIME DEFAULT current_timestamp() NOT NULL,
+                juml_perubahan INT NOT NULL,
+                keterangan VARCHAR(10) NOT NULL,
+                stock INT NOT NULL,
+                barcode VARCHAR(15) NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                id_transaksi VARCHAR(30) NOT NULL,
+                PRIMARY KEY (id_history)
+);
+
+ALTER TABLE history_stock MODIFY COLUMN id_history VARCHAR(16) COMMENT 'oooo-yymmddiiiii';
+
+ALTER TABLE history_stock MODIFY COLUMN keterangan VARCHAR(10) COMMENT 'Terjual, pembelian, Retur
+';
+
+
+CREATE TABLE cara_bayar (
+                id_cb INT AUTO_INCREMENT NOT NULL,
+                nama VARCHAR(20) NOT NULL,
+                PRIMARY KEY (id_cb)
+);
+
+
+CREATE TABLE pegawai (
+                id_pegawai VARCHAR(10) NOT NULL,
+                nama VARCHAR(50) NOT NULL,
+                username VARCHAR(20) NOT NULL,
+                password VARCHAR(32) NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                PRIMARY KEY (id_pegawai)
+);
+
+
+CREATE TABLE detail_hakakses (
+                grant_1 BOOLEAN NOT NULL,
+                id_hakakses INT NOT NULL,
+                id_pegawai VARCHAR(10) NOT NULL
+);
+
+
+CREATE TABLE kota (
+                id_kota INT AUTO_INCREMENT NOT NULL,
+                nama VARCHAR(30) NOT NULL,
+                PRIMARY KEY (id_kota)
+);
+
+
+CREATE TABLE supplier (
+                id_supplier VARCHAR(10) NOT NULL,
+                nama VARCHAR(30) NOT NULL,
+                alamat VARCHAR(50) NOT NULL,
+                kontak VARCHAR(50),
+                telp VARCHAR(15) NOT NULL,
+                email VARCHAR(50),
+                fax VARCHAR(20),
+                pkp BOOLEAN DEFAULT 0 NOT NULL,
+                NPWP VARCHAR(15),
+                nppkp VARCHAR(20),
+                status BOOLEAN DEFAULT 1 NOT NULL,
+                id_kota INT NOT NULL,
+                PRIMARY KEY (id_supplier)
+);
+
+
+CREATE TABLE buku_besar_pembantu_hutang (
+                id_bbph VARCHAR(16) NOT NULL,
+                timestamp DATETIME NOT NULL,
+                keterangan VARCHAR(30),
+                debit INT,
+                kredit INT,
+                saldo INT NOT NULL,
+                id_supplier VARCHAR(10) NOT NULL,
+                id_transaksi VARCHAR(20) NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                PRIMARY KEY (id_bbph)
+);
+
+ALTER TABLE buku_besar_pembantu_hutang MODIFY COLUMN id_bbph VARCHAR(16) COMMENT 'oooo-slkYYMMDDii
+slk-subdiary ledger kredit';
+
+
+CREATE TABLE order_pembelian (
+                no_po VARCHAR(17) NOT NULL,
+                tanggal_buat DATE NOT NULL,
+                tanggal_update DATE,
+                no_faktur_supplier VARCHAR(30),
+                n_hari INT DEFAULT 0,
+                jatuh_tempo DATE,
+                PPN BOOLEAN DEFAULT 0 NOT NULL,
+                keterangan VARCHAR(200),
+                diskon INT DEFAULT 0,
+                nilai_PPN INT,
+                total INT,
+                status INT DEFAULT 0 NOT NULL,
+                status_bayar INT,
+                id_supplier VARCHAR(10) NOT NULL,
+                id_pegawai VARCHAR(10) NOT NULL,
+                id_cb INT NOT NULL,
+                id_toko VARCHAR(4) NOT NULL,
+                PRIMARY KEY (no_po)
+);
+
+ALTER TABLE order_pembelian MODIFY COLUMN status INTEGER COMMENT '0:posted, 1:closed, 2:batal';
+
+
+CREATE TABLE retur_pembelian (
+                id_retur VARCHAR(20) NOT NULL,
+                tanggal DATE NOT NULL,
+                ppn INT NOT NULL,
+                total INT NOT NULL,
+                id_pegawai VARCHAR(10) NOT NULL,
+                no_po VARCHAR(17) NOT NULL,
+                PRIMARY KEY (id_retur)
+);
+
+
+CREATE TABLE detail_retur_pembelian (
+                quantity INT NOT NULL,
+                harga_satuan INT NOT NULL,
+                subtotal INT NOT NULL,
+                keterangan VARCHAR(50),
+                id_retur VARCHAR(20) NOT NULL,
+                barcode VARCHAR(15) NOT NULL
+);
+
+
+CREATE TABLE detail_PO (
+                jumlah_order INT NOT NULL,
+                jumlah_diterima INT,
+                harga_satuan INT,
+                diskon INT,
+                subtotal INT,
+                status INT,
+                barcode VARCHAR(15) NOT NULL,
+                no_po VARCHAR(17) NOT NULL
+);
+
+
+ALTER TABLE jurnal ADD CONSTRAINT coa_jurnal_fk
+FOREIGN KEY (id_coa)
+REFERENCES coa (id_coa)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE order_pembelian ADD CONSTRAINT badan_hukum_order_pembelian_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE history_stock ADD CONSTRAINT badan_hukum_history_stock_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE pegawai ADD CONSTRAINT badan_hukum_pegawai_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE penjualan ADD CONSTRAINT badan_hukum_penjualan_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE anggota ADD CONSTRAINT badan_hukum_anggota_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE buku_besar_pembantu_hutang ADD CONSTRAINT toko_buku_besar_pembantu_hutang_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE jurnal ADD CONSTRAINT toko_jurnal_fk
+FOREIGN KEY (id_toko)
+REFERENCES toko (id_toko)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE buku_besar_pembantu_piutang ADD CONSTRAINT anggota_buku_besar_pembantu_piutang_fk
+FOREIGN KEY (NIP)
+REFERENCES anggota (NIP)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE penjualan ADD CONSTRAINT anggota_penjualan_fk
+FOREIGN KEY (NIP)
+REFERENCES anggota (NIP)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_penjualan ADD CONSTRAINT penjualan_detail_penjualan_fk
+FOREIGN KEY (id_penjualan)
+REFERENCES penjualan (id_penjualan)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE retur_penjualan ADD CONSTRAINT penjualan_retur_penjualan_fk
+FOREIGN KEY (id_penjualan)
+REFERENCES penjualan (id_penjualan)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_retur_penjualan ADD CONSTRAINT retur_penjualan_detail_retur_penjualan_fk
+FOREIGN KEY (id_retur_penjualan)
+REFERENCES retur_penjualan (id_retur_penjualan)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_hakakses ADD CONSTRAINT hak_akses_detail_hakakses_fk
+FOREIGN KEY (id_hakakses)
+REFERENCES hak_akses (id_hakakses)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE barang ADD CONSTRAINT satuan_barang_fk
+FOREIGN KEY (id_satuan)
+REFERENCES satuan (id_satuan)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE barang ADD CONSTRAINT golongan_barang_fk
+FOREIGN KEY (kode_gol)
+REFERENCES golongan (kode_gol)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE history_stock ADD CONSTRAINT barang_history_stock_fk
+FOREIGN KEY (barcode)
+REFERENCES barang (barcode)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_PO ADD CONSTRAINT barang_detail_po_fk
+FOREIGN KEY (barcode)
+REFERENCES barang (barcode)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_retur_pembelian ADD CONSTRAINT barang_detail_retur_fk
+FOREIGN KEY (barcode)
+REFERENCES barang (barcode)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_penjualan ADD CONSTRAINT barang_detail_penjualan_fk
+FOREIGN KEY (barcode)
+REFERENCES barang (barcode)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_retur_penjualan ADD CONSTRAINT barang_detail_retur_penjualan_fk
+FOREIGN KEY (barcode)
+REFERENCES barang (barcode)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE order_pembelian ADD CONSTRAINT pegawai_order_pembelian_fk
+FOREIGN KEY (id_pegawai)
+REFERENCES pegawai (id_pegawai)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_hakakses ADD CONSTRAINT pegawai_detail_hakakses_fk
+FOREIGN KEY (id_pegawai)
+REFERENCES pegawai (id_pegawai)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE retur_pembelian ADD CONSTRAINT pegawai_retur_fk
+FOREIGN KEY (id_pegawai)
+REFERENCES pegawai (id_pegawai)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE supplier ADD CONSTRAINT kota_supplier_fk
+FOREIGN KEY (id_kota)
+REFERENCES kota (id_kota)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE order_pembelian ADD CONSTRAINT supplier_order_pembelian_fk
+FOREIGN KEY (id_supplier)
+REFERENCES supplier (id_supplier)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE buku_besar_pembantu_hutang ADD CONSTRAINT supplier_buku_besar_pembantu_hutang_fk
+FOREIGN KEY (id_supplier)
+REFERENCES supplier (id_supplier)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_PO ADD CONSTRAINT order_pembelian_detail_po_fk
+FOREIGN KEY (no_po)
+REFERENCES order_pembelian (no_po)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE retur_pembelian ADD CONSTRAINT order_pembelian_retur_fk
+FOREIGN KEY (no_po)
+REFERENCES order_pembelian (no_po)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+
+ALTER TABLE detail_retur_pembelian ADD CONSTRAINT retur_detail_retur_fk
+FOREIGN KEY (id_retur)
+REFERENCES retur_pembelian (id_retur)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
