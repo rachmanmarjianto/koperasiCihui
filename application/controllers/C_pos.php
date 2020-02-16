@@ -8,7 +8,8 @@ class C_pos extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->load->helper(array("url"));
+        $this->load->helper(array("url", "form"));
+        $this->load->model('M_pos');
 
         if(isset($this->uri->segments[1]))
             $this->header_data['controller'] = $this->uri->segments[1];   
@@ -21,6 +22,16 @@ class C_pos extends CI_Controller {
         $this->load->view('pos/topnav');
         $this->load->view('pos/pos');
         $this->load->view('pos/footer');
+    }
+
+    public function findProduct()
+    {
+        echo $this->M_pos->findProduct($_POST['barcode']);
+    }
+
+    public function submitForm()
+    {
+        print_r($_POST);
     }
 }
 

@@ -152,6 +152,7 @@ CREATE TABLE detail_retur_penjualan (
 
 CREATE TABLE detail_penjualan (
                 qty INT NOT NULL,
+                harga_satuan INT NOT NULL,
                 subtotal INT NOT NULL,
                 id_penjualan VARCHAR(18) NOT NULL,
                 barcode VARCHAR(15) NOT NULL
@@ -174,8 +175,7 @@ CREATE TABLE history_stock (
 
 ALTER TABLE history_stock MODIFY COLUMN id_history VARCHAR(16) COMMENT 'oooo-yymmddiiiii';
 
-ALTER TABLE history_stock MODIFY COLUMN keterangan VARCHAR(10) COMMENT 'Terjual, pembelian, Retur
-';
+ALTER TABLE history_stock MODIFY COLUMN keterangan VARCHAR(10) COMMENT 'Terjual, pembelian, Retur';
 
 
 CREATE TABLE cara_bayar (
